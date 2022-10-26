@@ -1,4 +1,8 @@
 {
-  "email": "nayeer@tessinternational.com",
-  "password": ""
+  "name": "Nayeer",
+  "email": "",
+  "password": "",
+  "location":"Office",
+  "health level":5,
+  "tasks": ["1. ISEM 10 Development", "2. ISEM X bug fixes"]
 }
