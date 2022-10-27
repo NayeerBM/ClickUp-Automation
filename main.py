@@ -88,13 +88,12 @@ def checkIn():
         wait.until(EC.presence_of_all_elements_located((By.XPATH,"//input[@containerclass='popover_white'][@type='checkbox']")))[0].click()
         time.sleep(5)
         #clicks on Health Level Column - Skip first as it's causing too many issues
-        try:
-            wait.until(EC.presence_of_element_located((By.XPATH,f"/html/body/app-root/cu-task-keeper/cu-manager-view-task/div[2]/div/div/div[2]/div[3]/main/cu-task-custom-fields/div/section/div[5]/div[2]/cu-custom-field/cu-edit-task-custom-field-value/div/cu-emoji-custom-field-value/div/div[{config_data['health level']}]"))).click()
-        except:
-            pass
+        # try:
+        #     wait.until(EC.presence_of_element_located((By.XPATH,f"/html/body/app-root/cu-task-keeper/cu-manager-view-task/div[2]/div/div/div[2]/div[3]/main/cu-task-custom-fields/div/section/div[5]/div[2]/cu-custom-field/cu-edit-task-custom-field-value/div/cu-emoji-custom-field-value/div/div[{config_data['health level']}]"))).click()
+        # except:
+        #     pass
         #Selects Location
         selectedOption=location[config_data['location']]
-        print(config_data['location'],selectedOption)
         driver.find_element(By.XPATH,"/html/body/app-root/cu-task-keeper/cu-manager-view-task/div[2]/div/div/div[2]/div[3]/main/cu-task-custom-fields/div/section/div[7]/div[2]/cu-custom-field/cu-edit-task-custom-field-value/div/div").click()
         wait.until(EC.presence_of_element_located((By.XPATH,f"/html/body/div/div[2]/div/div/div[2]/cu-select-option[{selectedOption}]/div/div"))).click()
         for task in config_data["tasks"]:
