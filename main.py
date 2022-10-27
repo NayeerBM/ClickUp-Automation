@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 driver_service=Service('./driver/geckodriver.exe')
-
+location={"-":1,"Home":2,"Office":3,"On Site":4,"Leave":5}
 def main():
     global driver
     global wait
@@ -46,6 +46,9 @@ def main():
             checkOut()
         else:
             print('''Invalid argument. Please use "python main.exe <argument>"''')
+        
+        driver.close()
+        driver.quit()
     
     except Exception as e:
         display_Error(e)        
@@ -60,42 +63,72 @@ def login():
     wait.until(EC.presence_of_element_located((By.ID,"login-email-input"))).send_keys(config_data["email"])
     wait.until(EC.presence_of_element_located((By.ID,"login-password-input"))).send_keys(config_data["password"])
     wait.until(EC.presence_of_element_located((By.CLASS_NAME,"login-page-new__main-form-button"))).click()
-    print("Finished logging in")
 
-def checkIn():
-    pass
-
-#def checkOut(driver,currentDate):
 def checkOut():
-    print("Started checkOut function")
+    try:
+        goToName()
+        time.sleep(3)
+        #click on "Show empty fields"
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,"div[class^='cu-task-custom-fields__collapsed-text']"))).click()
+        #click on Check-Out
+        wait.until(EC.presence_of_all_elements_located((By.XPATH,"//input[@containerclass='popover_white'][@type='checkbox']")))[1].click()
+
+    except Exception as e:
+        print(e)
+        display_Error(e)
+#def checkOut(driver,currentDate):
+def checkIn():
     try:
         
-        currentDate=date.today().strftime("%d.%m.%Y")
-        # driver.get("https://app.clickup.com/3635363/v/l/3ey53-50708/370328")
-        
-        wait.until(EC.presence_of_element_located((By.XPATH,f"//a[@href='https://app.clickup.com/3635363/v/l/3ey53-50708/3703285']")))
-        wait.until(EC.presence_of_element_located((By.XPATH,f"//div[@data-test='nav-section__{currentDate}']"))).click()
-        wait.until(EC.presence_of_element_located((By.XPATH,f"/html/body/app-root/cu-app-shell/cu-manager/div[1]/div/div[2]/main/cu-dashboard/cu-left-sidebar/div/cu-sidebar-toggle/button"))).click()
-        name=config_data["name"]
-        element=wait.until( EC.element_to_be_clickable((By.XPATH, f"//span[@data-test='task-row-main__{name}']"))).click()
-        # driver.execute_script("return arguments[0].scrollIntoView();", element)
-        driver.maximize_window()
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        element.click()
-        # elem_not_found = True
-        # y = 35 # setting initial scroll pixel size to 10.. find what suits you 
-        # while elem_not_found:
-        #     try:
-        #         ActionChains(driver).scroll_by_amount(0, y).perform()
-        #         wait.until( EC.presence_of_element_located((By.XPATH, f"//span[@data-test='task-row-main__{name}']")))
-        #         #Once element is loaded do whatever you want with it 
-        #         elem_not_found = False
-        #     except:
-        #         y += 35 # scrolling 35 pixels below if element is not found
+        goToName()
+        time.sleep(3)
+        #click on "Show empty fields"
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,"div[class^='cu-task-custom-fields__collapsed-text']"))).click()
+        #clicks on Check-In Column
+        wait.until(EC.presence_of_all_elements_located((By.XPATH,"//input[@containerclass='popover_white'][@type='checkbox']")))[0].click()
+        time.sleep(5)
+        #clicks on Health Level Column - Skip first as it's causing too many issues
+        try:
+            wait.until(EC.presence_of_element_located((By.XPATH,f"/html/body/app-root/cu-task-keeper/cu-manager-view-task/div[2]/div/div/div[2]/div[3]/main/cu-task-custom-fields/div/section/div[5]/div[2]/cu-custom-field/cu-edit-task-custom-field-value/div/cu-emoji-custom-field-value/div/div[{config_data['health level']}]"))).click()
+        except:
+            pass
+        #Selects Location
+        selectedOption=location[config_data['location']]
+        print(config_data['location'],selectedOption)
+        driver.find_element(By.XPATH,"/html/body/app-root/cu-task-keeper/cu-manager-view-task/div[2]/div/div/div[2]/div[3]/main/cu-task-custom-fields/div/section/div[7]/div[2]/cu-custom-field/cu-edit-task-custom-field-value/div/div").click()
+        wait.until(EC.presence_of_element_located((By.XPATH,f"/html/body/div/div[2]/div/div/div[2]/cu-select-option[{selectedOption}]/div/div"))).click()
+        for task in config_data["tasks"]:
+            #Fill up tasks
+            wait.until(EC.presence_of_element_located((By.XPATH,f"//input[@class='cu-task-row-new__input']"))).send_keys(task)
+            wait.until(EC.presence_of_element_located((By.XPATH,f"//input[@class='cu-task-row-new__input']"))).send_keys(Keys.ENTER)
     except Exception as e:
         print(e)
         display_Error(e)
 
+def goToName():
+    currentDate=date.today().strftime("%d.%m.%Y")
+    # driver.get("https://app.clickup.com/3635363/v/l/3ey53-50708/370328")
+    time.sleep(3)  
+    wait.until(EC.presence_of_element_located((By.XPATH,f"//a[@href='https://app.clickup.com/3635363/v/l/3ey53-50708/3703285']")))
+    wait.until(EC.presence_of_element_located((By.XPATH,f"//div[@data-test='nav-section__{currentDate}']"))).click()
+    wait.until(EC.presence_of_element_located((By.XPATH,f"/html/body/app-root/cu-app-shell/cu-manager/div[1]/div/div[2]/main/cu-dashboard/cu-left-sidebar/div/cu-sidebar-toggle/button"))).click()
+    name=config_data["name"]
+    time.sleep(3)
+    wait.until(EC.presence_of_element_located((By.XPATH,"/html/body/app-root/cu-app-shell/cu-manager/div[1]/div/div[2]/main/cu-dashboard/div/div/cu-dashboard-table/div/div[2]/cu-list-group/div"))).click()
+    scrollDownElement=wait.until(EC.presence_of_element_located((By.XPATH,"/html/body/app-root/cu-app-shell/cu-manager/div[1]/div/div[2]/main/cu-dashboard/div")))
+    ActionChains(driver).move_to_element(scrollDownElement).send_keys(Keys.PAGE_DOWN).perform()
+    
+    elem_not_found = True
+    while elem_not_found:
+        try:
+            # wait.until(EC.presence_of_element_located((By.XPATH,"/html/body/app-root/cu-app-shell/cu-manager/div[1]/div/div[2]/main/cu-dashboard/div/div/cu-dashboard-table/div/div[2]/cu-list-group/div"))).click()
+            
+            ActionChains(driver).move_to_element(scrollDownElement).send_keys(Keys.PAGE_DOWN).perform()
+            wait.until( EC.presence_of_element_located((By.XPATH, f"//span[@data-test='task-row-main__{name}']"))).click()
+            #Once element is loaded do whatever you want with it 
+            elem_not_found = False
+        except Exception as e:
+            y=10
 def decryptPassword(password):
     NotImplemented
 
@@ -106,6 +139,7 @@ def display_Error(error_message):
     print(error_message)
     if(isBrowserAlive()==True):
         driver.close()
+        driver.quit()
     exit(0)
     
 def isBrowserAlive():
