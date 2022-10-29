@@ -13,7 +13,7 @@
       "email": "",
       "password": "", #as of now no encryption, becareful not to share password with anyone
       "location":"Office", #Office/Home/On Site
-      "health level":5,
+      "health level":5, #Temperature; 1= 1 Thumbs-Up, 5= 5 Thumbs-Up
       "tasks": ["1. ISEM 10 Development", "2. ISEM X bug fixes"]
     }
     ```
