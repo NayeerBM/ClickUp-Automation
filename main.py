@@ -9,6 +9,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from decrypt import decryptPassword
 
 driver_service=Service('./driver/geckodriver.exe')
 location={"-":1,"Home":2,"Office":3,"On Site":4,"Leave":5}
@@ -26,6 +27,12 @@ def main():
         #read from config.json
         with open('config.json','r') as file:
             config_data=json.load(file)
+            
+        print(config_data["password"])
+        encryptedPassword=config_data["password"]
+        decryptedPassword=decryptPassword(encryptedPassword)
+        print("decrypted password is",decryptedPassword)
+        exit(0)
 
         #check if any value is empty
         for key,value in config_data.items():
