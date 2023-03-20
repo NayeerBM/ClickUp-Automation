@@ -31,8 +31,8 @@ def main():
         print(config_data["password"])
         encryptedPassword=config_data["password"]
         decryptedPassword=decryptPassword(encryptedPassword)
+        config_data["password"]=decryptedPassword
         print("decrypted password is",decryptedPassword)
-        exit(0)
 
         #check if any value is empty
         for key,value in config_data.items():
@@ -113,9 +113,9 @@ def checkIn():
 
 def goToName():
     currentDate=date.today().strftime("%d.%m.%Y")
-    # driver.get("https://app.clickup.com/3635363/v/l/3ey53-50708/370328")
+    currentMonthYear=date.today().strftime("%B %Y")
     time.sleep(3)  
-    wait.until(EC.presence_of_element_located((By.XPATH,f"//a[@href='https://app.clickup.com/3635363/v/l/3ey53-50708/3703285']")))
+    wait.until(EC.presence_of_element_located((By.XPATH,f"//*[contains(text(), '{currentMonthYear}')]")))
     wait.until(EC.presence_of_element_located((By.XPATH,f"//div[@data-test='nav-section__{currentDate}']"))).click()
     wait.until(EC.presence_of_element_located((By.XPATH,f"/html/body/app-root/cu-app-shell/cu-manager/div[1]/div/div[2]/main/cu-dashboard/cu-left-sidebar/div/cu-sidebar-toggle/button"))).click()
     name=config_data["name"]
@@ -135,11 +135,7 @@ def goToName():
             elem_not_found = False
         except Exception as e:
             y=10
-def decryptPassword(password):
-    NotImplemented
 
-def encryptPassword(password):
-    NotImplemented
 
 def display_Error(error_message):
     print(error_message)
