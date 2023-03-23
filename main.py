@@ -32,7 +32,6 @@ def main():
         encryptedPassword=config_data["password"]
         decryptedPassword=decryptPassword(encryptedPassword)
         config_data["password"]=decryptedPassword
-        print("decrypted password is",decryptedPassword)
 
         #check if any value is empty
         for key,value in config_data.items():

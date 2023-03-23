@@ -14,7 +14,6 @@ def decryptPassword(password):
         password=bytes(password,"utf-8")
         #decrypt password
         password=fernet.decrypt(password).decode()
-        print(f"decrypted password: {password}")
     
     except Exception as ex:
         raise ex
